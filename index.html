@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Unidad 2 interactiva de Matrices y Determinantes para Álgebra y Geometría I.">
+  <meta name="theme-color" content="#173d7a">
+  <title>Unidad 2 · Matrices y Determinantes</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        packages: {'[+]': ['ams']}
+      },
+      svg: {fontCache: 'global'},
+      options: {skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="topbar">
+    <button class="icon-button menu-button" id="menuButton" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">A</span>
+      <div>
+        <p class="eyebrow">Álgebra y Geometría I · Ingeniería en Petróleo</p>
+        <h1>Unidad 2 · Matrices y Determinantes</h1>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="button ghost compact" id="printButton" type="button">Imprimir recorrido</button>
+      <button class="button ghost compact" id="resetProgressButton" type="button">Reiniciar progreso</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Navegación de la unidad">
+      <div class="progress-card">
+        <div class="progress-label"><span>Progreso</span><strong id="progressText">0%</strong></div>
+        <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+        <p id="progressDetail">Completá actividades y ejemplos para registrar tu avance.</p>
+      </div>
+
+      <nav class="module-nav" id="moduleNav">
+        <button class="nav-item active" data-target="inicio" type="button"><span>0</span> Inicio</button>
+        <button class="nav-item" data-target="lectura" type="button"><span>1</span> Leer matrices</button>
+        <button class="nav-item" data-target="operaciones" type="button"><span>2</span> Operaciones</button>
+        <button class="nav-item" data-target="producto" type="button"><span>3</span> Producto matricial</button>
+        <button class="nav-item" data-target="ecuaciones" type="button"><span>4</span> Ecuaciones matriciales</button>
+        <button class="nav-item" data-target="aplicacion" type="button"><span>5</span> Producción petrolera</button>
+        <button class="nav-item" data-target="determinantes" type="button"><span>6</span> Determinantes</button>
+        <button class="nav-item" data-target="inversa" type="button"><span>7</span> Matriz inversa</button>
+        <button class="nav-item" data-target="propiedades" type="button"><span>8</span> Propiedades</button>
+        <button class="nav-item" data-target="practica" type="button"><span>9</span> Práctica guiada</button>
+        <button class="nav-item" data-target="autoevaluacion" type="button"><span>10</span> Autoevaluación</button>
+        <button class="nav-item" data-target="materiales" type="button"><span>i</span> Videos y archivos</button>
+      </nav>
+
+      <div class="sidebar-note">
+        <strong>Regla de estudio</strong>
+        <p>Antes de habilitar un paso, escribí en papel qué operación harías y justificá por qué está definida.</p>
+      </div>
+    </aside>
+
+    <main id="contenido" class="content">
+      <section class="module active" id="inicio" data-module="inicio">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="kicker">Teoría + práctica + laboratorio interactivo</p>
+            <h2>Aprender matrices haciendo operaciones, no solamente mirando fórmulas</h2>
+            <p>La unidad reorganiza la teoría, el Trabajo Práctico 2, la resolución y las presentaciones de la cátedra en una ruta de estudio. Cada tema incluye una explicación breve, una visualización, una actividad y ejemplos que se revelan paso a paso.</p>
+            <div class="hero-actions">
+              <button class="button primary" data-go="lectura" type="button">Comenzar la unidad</button>
+              <button class="button secondary" data-go="autoevaluacion" type="button">Probar la autoevaluación</button>
+            </div>
+          </div>
+          <div class="hero-matrix" aria-label="Matriz decorativa">
+            <div class="matrix-frame large">
+              <span>200</span><span>180</span><span>150</span>
+              <span>190</span><span>170</span><span>160</span>
+              <span>210</span><span>200</span><span>190</span>
+            </div>
+            <p>Filas: meses · Columnas: productos</p>
+          </div>
+        </div>
+
+        <div class="section-heading"><div><p class="kicker">Ruta de trabajo</p><h3>Diez estaciones para dominar la unidad</h3></div></div>
+        <div class="study-grid">
+          <article class="study-card"><span>1</span><h4>Leer</h4><p>Reconocer orden, posición de un elemento, diagonales, traza y tipos especiales.</p></article>
+          <article class="study-card"><span>2</span><h4>Operar</h4><p>Sumar, restar, multiplicar por un escalar, trasponer y multiplicar matrices.</p></article>
+          <article class="study-card"><span>3</span><h4>Resolver</h4><p>Analizar órdenes y despejar matrices sin tratar la multiplicación como si fuera conmutativa.</p></article>
+          <article class="study-card"><span>4</span><h4>Decidir</h4><p>Calcular determinantes, estudiar inversibilidad y elegir propiedades convenientes.</p></article>
+        </div>
+
+        <article class="route-board">
+          <h3>Correspondencia con el TP 2</h3>
+          <div class="route-columns">
+            <div><strong>Ejercicios 1–4</strong><p>Definición por índices, igualdad, operaciones, traza y ecuaciones.</p></div>
+            <div><strong>Ejercicios 5–8</strong><p>Modelización, inversa, sistemas de matrices y traspuestas.</p></div>
+            <div><strong>Ejercicios 9–13</strong><p>Determinantes, parámetros y uso de propiedades.</p></div>
+            <div><strong>Ejercicios 14–16</strong><p>Inversibilidad, adjunta y ecuaciones con matrices inversas.</p></div>
+          </div>
+        </article>
+
+        <article class="callout warning source-review">
+          <strong>Lectura crítica del material</strong>
+          <p>La página conserva el enfoque de la cátedra, pero señala algunas erratas numéricas detectadas en la resolución del problema de producción petrolera. En la sección correspondiente se muestran los cálculos corregidos y se explica la diferencia.</p>
+        </article>
+      </section>
+
+      <section class="module" id="lectura" data-module="lectura" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 1</p><h2>Cómo leer y construir una matriz</h2></div>
+          <button class="complete-button" data-complete="lectura" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <div class="two-column">
+          <article class="theory-card">
+            <h3>Filas, columnas y posición</h3>
+            <p>Una matriz de orden \(m\times n\) tiene \(m\) filas y \(n\) columnas. El elemento \(a_{ij}\) está en la fila \(i\) y la columna \(j\).</p>
+            <div class="formula-panel">\[A=(a_{ij})\in\mathcal M_{m\times n}(\mathbb R)\]</div>
+            <p>El orden siempre se lee <strong>filas por columnas</strong>. Por ejemplo, una matriz de orden \(2\times 3\) tiene seis entradas.</p>
+          </article>
+          <article class="theory-card">
+            <h3>Matrices cuadradas</h3>
+            <p>Cuando el número de filas coincide con el de columnas, la matriz es cuadrada. Allí se definen la diagonal principal y la traza:</p>
+            <div class="formula-panel">\[\operatorname{Tr}(A)=a_{11}+a_{22}+\cdots+a_{nn}.\]</div>
+            <p>Una matriz puede pertenecer a más de una clase. Por ejemplo, una matriz diagonal también es triangular superior e inferior.</p>
+          </article>
+        </div>
+
+        <article class="activity-card">
+          <div class="activity-header"><div><p class="tag">Explorador</p><h3>Ubicá el elemento \(a_{ij}\)</h3></div><span class="status-pill">3 × 4</span></div>
+          <p>Hacé clic en una entrada. La página identifica su fila, su columna y su notación.</p>
+          <div class="locator-layout">
+            <div class="matrix-grid locator-matrix" id="locatorMatrix" role="grid" aria-label="Matriz de tres filas y cuatro columnas"></div>
+            <div class="locator-info" id="locatorInfo">
+              <p>Seleccioná una entrada de la matriz.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="activity-card">
+          <div class="activity-header"><div><p class="tag">Actividad autocorregible</p><h3>Clasificá matrices especiales</h3></div><span class="status-pill">6 casos</span></div>
+          <p>Seleccioná todas las categorías que correspondan. Algunas matrices admiten varias clasificaciones.</p>
+          <div id="typeClassifier" class="classification-list"></div>
+          <div class="activity-actions">
+            <button class="button primary" id="checkTypes" type="button">Comprobar</button>
+            <button class="button ghost" id="resetTypes" type="button">Reiniciar</button>
+          </div>
+          <div class="feedback" id="typeFeedback" aria-live="polite"></div>
+        </article>
+
+        <article class="guided-card" data-stepper="buildMatrix"></article>
+      </section>
+
+      <section class="module" id="operaciones" data-module="operaciones" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 2</p><h2>Operaciones elementales con matrices</h2></div>
+          <button class="complete-button" data-complete="operaciones" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <div class="concept-strip">
+          <div><strong>Suma y resta</strong><p>Mismo orden; se opera entrada por entrada.</p></div>
+          <div><strong>Escalar</strong><p>El número multiplica todas las entradas.</p></div>
+          <div><strong>Traspuesta</strong><p>Las filas pasan a ser columnas.</p></div>
+          <div><strong>Potencia</strong><p>Solo se define para matrices cuadradas.</p></div>
+        </div>
+
+        <article class="activity-card matrix-calculator">
+          <div class="activity-header"><div><p class="tag">Laboratorio</p><h3>Calculadora explicativa de operaciones</h3></div></div>
+          <p>Editá las matrices \(A\) y \(B\). Elegí una operación y observá qué condición se utiliza.</p>
+          <div class="matrix-input-row">
+            <div><h4>Matriz \(A\)</h4><div class="editable-matrix" id="matrixAInputs"></div></div>
+            <div><h4>Matriz \(B\)</h4><div class="editable-matrix" id="matrixBInputs"></div></div>
+          </div>
+          <div class="operation-toolbar" role="group" aria-label="Operaciones">
+            <button class="chip active" data-matrix-op="sum" type="button">\(A+B\)</button>
+            <button class="chip" data-matrix-op="difference" type="button">\(A-B\)</button>
+            <button class="chip" data-matrix-op="scalar" type="button">\(kA\)</button>
+            <button class="chip" data-matrix-op="transpose" type="button">\(A^t\)</button>
+          </div>
+          <label class="range-control" id="scalarControl">Escalar \(k\): <strong id="scalarValue">2</strong><input id="scalarSlider" type="range" min="-4" max="5" value="2"></label>
+          <div class="calculation-output" id="matrixOperationOutput"></div>
+        </article>
+
+        <article class="activity-card">
+          <div class="activity-header"><div><p class="tag">Decisión rápida</p><h3>¿La operación está definida?</h3></div><span class="status-pill">Órdenes</span></div>
+          <div id="orderChallenge" class="choice-stack"></div>
+          <div class="activity-actions"><button class="button primary" id="newOrderChallenge" type="button">Otro desafío</button></div>
+        </article>
+
+        <article class="video-card" data-video-id="HOb-U8kHDY0">
+          <div class="video-copy"><p class="tag">Video de apoyo</p><h3>Suma, resta y producto por escalar</h3><p>Usalo como repaso después de resolver la actividad anterior.</p><button class="button secondary load-video" type="button">Cargar video</button></div>
+          <div class="video-placeholder"><span>▶</span><p>El video se carga cuando lo solicitás.</p></div>
+        </article>
+      </section>
+
+      <section class="module" id="producto" data-module="producto" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 3</p><h2>Producto de matrices: fila por columna</h2></div>
+          <button class="complete-button" data-complete="producto" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <article class="theory-card wide">
+          <h3>Primero se analizan los órdenes</h3>
+          <div class="formula-panel">\[A_{m\times p}\,B_{p\times n}=C_{m\times n}.\]</div>
+          <p>El producto \(AB\) existe cuando el número de columnas de \(A\) coincide con el número de filas de \(B\). La matriz resultante conserva las filas de \(A\) y las columnas de \(B\).</p>
+          <div class="callout danger"><strong>No es conmutativo:</strong> aunque ambos productos existan, en general \(AB\ne BA\).</div>
+        </article>
+
+        <article class="activity-card product-lab">
+          <div class="activity-header"><div><p class="tag">Visualización principal</p><h3>Elegí una entrada del producto</h3></div><span class="status-pill">Fila × columna</span></div>
+          <p>Las matrices son las del ejemplo central del apunte teórico. Hacé clic en una celda de \(C=AB\).</p>
+          <div class="product-layout">
+            <div><h4>\(A_{2\times3}\)</h4><div class="matrix-grid" id="productMatrixA"></div></div>
+            <div class="operator-symbol">×</div>
+            <div><h4>\(B_{3\times2}\)</h4><div class="matrix-grid" id="productMatrixB"></div></div>
+            <div class="operator-symbol">=</div>
+            <div><h4>\(C_{2\times2}\)</h4><div class="matrix-grid result-matrix" id="productMatrixC"></div></div>
+          </div>
+          <div class="product-explanation" id="productExplanation">Seleccioná una entrada de \(C\) para ver su cálculo.</div>
+        </article>
+
+        <article class="activity-card">
+          <div class="activity-header"><div><p class="tag">Concepto clave</p><h3>Compará \(AB\) y \(BA\)</h3></div></div>
+          <p>Con las matrices anteriores, los dos productos existen, pero tienen órdenes diferentes.</p>
+          <div class="compare-products">
+            <div><strong>\(AB\)</strong><div class="formula-panel">\[AB=\begin{pmatrix}-3&0\\-1&10\end{pmatrix}_{2\times2}\]</div></div>
+            <div><strong>\(BA\)</strong><div class="formula-panel">\[BA=\begin{pmatrix}6&2&8\\18&1&16\\-2&1&0\end{pmatrix}_{3\times3}\]</div></div>
+          </div>
+          <button class="button primary" id="checkProductComparison" type="button">¿Qué demuestra este ejemplo?</button>
+          <div class="feedback" id="productComparisonFeedback" aria-live="polite"></div>
+        </article>
+
+        <article class="video-card" data-video-id="qTRomkDFFOM">
+          <div class="video-copy"><p class="tag">Video universitario</p><h3>Producto de matrices</h3><p>Explicación de la Universidad Miguel Hernández sobre el mecanismo fila por columna.</p><button class="button secondary load-video" type="button">Cargar video</button></div>
+          <div class="video-placeholder"><span>▶</span><p>Antes de mirar, predecí el orden del producto.</p></div>
+        </article>
+      </section>
+
+      <section class="module" id="ecuaciones" data-module="ecuaciones" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 4</p><h2>Ecuaciones matriciales y análisis de órdenes</h2></div>
+          <button class="complete-button" data-complete="ecuaciones" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <div class="two-column">
+          <article class="theory-card">
+            <h3>Despejes sin inversa</h3>
+            <p>En expresiones como \(2X+A=B^t\), se usan las propiedades de la suma y del producto por escalar:</p>
+            <div class="formula-panel">\[2X+A=B^t\iff X=\frac12(B^t-A).\]</div>
+            <p>Todas las matrices de una suma deben tener el mismo orden.</p>
+          </article>
+          <article class="theory-card">
+            <h3>Despejes con inversa</h3>
+            <p>El lado desde el cual se multiplica es esencial:</p>
+            <div class="formula-panel">\[AX=B\Rightarrow X=A^{-1}B,\qquad XA=B\Rightarrow X=BA^{-1}.\]</div>
+            <p>No existe una “división de matrices” y el producto no es conmutativo.</p>
+          </article>
+        </div>
+
+        <article class="guided-card" data-stepper="simpleEquation"></article>
+        <article class="guided-card" data-stepper="inverseEquation"></article>
+
+        <article class="activity-card">
+          <div class="activity-header"><div><p class="tag">Elegí el lado correcto</p><h3>¿Dónde debe aparecer \(A^{-1}\)?</h3></div></div>
+          <div id="inverseSideActivity" class="choice-stack"></div>
+        </article>
+
+        <article class="video-card" data-video-id="y_KFYE4iWmY">
+          <div class="video-copy"><p class="tag">Video de apoyo</p><h3>Despeje en una ecuación matricial</h3><p>Prestá especial atención al orden de los factores.</p><button class="button secondary load-video" type="button">Cargar video</button></div>
+          <div class="video-placeholder"><span>▶</span><p>Pregunta previa: ¿por qué no se puede “pasar dividiendo”?</p></div>
+        </article>
+      </section>
+
+      <section class="module" id="aplicacion" data-module="aplicacion" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 5</p><h2>Aplicación: producción en tres campos petrolíferos</h2></div>
+          <button class="complete-button" data-complete="aplicacion" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <article class="theory-card wide">
+          <h3>Cómo se interpreta la tabla matricial</h3>
+          <p>Cada fila representa un mes —enero, febrero y marzo— y cada columna representa un producto —gasolina, diesel y kerosene—. Por eso, la entrada \((2,2)\) de \(C_1\) representa la producción de diesel del Campo 1 durante febrero.</p>
+        </article>
+
+        <article class="activity-card oil-lab">
+          <div class="activity-header"><div><p class="tag">Ejercicio 5 del TP</p><h3>Explorador de producción</h3></div><span class="status-pill">Datos reales</span></div>
+          <div class="oil-tabs" id="oilTabs"></div>
+          <div class="oil-table-wrap" id="oilTableWrap"></div>
+          <div class="oil-question" id="oilQuestion"></div>
+          <div class="activity-actions">
+            <button class="button primary" id="checkOilAnswer" type="button">Comprobar respuesta</button>
+            <button class="button ghost" id="nextOilQuestion" type="button">Otra pregunta</button>
+          </div>
+          <div class="feedback" id="oilFeedback" aria-live="polite"></div>
+        </article>
+
+        <article class="guided-card" data-stepper="oilTotal"></article>
+
+        <article class="activity-card">
+          <div class="activity-header"><div><p class="tag">Comparación porcentual</p><h3>¿El Campo 2 superó en un 10 % al Campo 1?</h3></div></div>
+          <p>La meta se representa con \(D_2=1{,}1C_1\). Luego se calcula \(C_2-D_2\): un valor positivo indica que se superó la meta, cero que se alcanzó exactamente y un valor negativo que no se alcanzó.</p>
+          <button class="button primary" id="revealOilComparison" type="button">Calcular y comparar</button>
+          <div class="oil-comparison" id="oilComparison" hidden></div>
+          <div class="callout warning compact-callout">
+            <strong>Errata detectada en la resolución:</strong>
+            <p>La matriz \(1{,}1C_1\), la tercera suma total y varias conclusiones aparecen con valores incorrectos. La actividad usa los cálculos aritméticos corregidos y permite verificarlos entrada por entrada.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="module" id="determinantes" data-module="determinantes" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 6</p><h2>Determinantes: de orden 2 a Laplace</h2></div>
+          <button class="complete-button" data-complete="determinantes" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <article class="activity-card determinant-2-lab">
+          <div class="activity-header"><div><p class="tag">Orden 2</p><h3>Dos diagonales, una resta</h3></div></div>
+          <div class="det-two-layout">
+            <div class="editable-matrix det-inputs" id="det2Inputs"></div>
+            <div class="det-diagram" id="det2Diagram"></div>
+            <div class="calculation-output" id="det2Output"></div>
+          </div>
+        </article>
+
+        <article class="activity-card sarrus-lab">
+          <div class="activity-header"><div><p class="tag">Orden 3</p><h3>Regla de Sarrus paso a paso</h3></div><span class="status-pill">Solo 3 × 3</span></div>
+          <p>Usamos la matriz \(A=\begin{pmatrix}1&2&-2\\3&0&1\\-1&1&3\end{pmatrix}\). Revelá los productos de las diagonales de uno en uno.</p>
+          <div class="sarrus-board" id="sarrusBoard"></div>
+          <div class="step-controls">
+            <button class="button primary" id="nextSarrusStep" type="button">Mostrar siguiente diagonal</button>
+            <button class="button ghost" id="resetSarrus" type="button">Reiniciar</button>
+          </div>
+          <div class="sarrus-calculation" id="sarrusCalculation"></div>
+        </article>
+
+        <article class="activity-card laplace-lab">
+          <div class="activity-header"><div><p class="tag">Orden 4</p><h3>Elegí la mejor línea para desarrollar</h3></div></div>
+          <p>La matriz tiene tres ceros en la primera columna. Seleccionar esa columna reduce el problema a un solo determinante de orden 3.</p>
+          <div class="laplace-layout">
+            <div class="matrix-grid laplace-matrix" id="laplaceMatrix"></div>
+            <div class="laplace-controls" id="laplaceControls"></div>
+          </div>
+          <div class="laplace-result" id="laplaceResult"></div>
+        </article>
+
+        <div class="video-grid">
+          <article class="video-card compact-video" data-video-id="8OnOZvc5rFQ">
+            <div class="video-copy"><p class="tag">Video</p><h3>Regla de Sarrus</h3><button class="button secondary load-video" type="button">Cargar video</button></div>
+            <div class="video-placeholder"><span>▶</span></div>
+          </article>
+          <article class="video-card compact-video" data-video-id="w1wP2xm25x8">
+            <div class="video-copy"><p class="tag">Video</p><h3>Determinante 4 × 4 por cofactores</h3><button class="button secondary load-video" type="button">Cargar video</button></div>
+            <div class="video-placeholder"><span>▶</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="module" id="inversa" data-module="inversa" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 7</p><h2>Matriz inversa y operaciones elementales</h2></div>
+          <button class="complete-button" data-complete="inversa" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <div class="two-column">
+          <article class="theory-card">
+            <h3>Definición</h3>
+            <div class="formula-panel">\[AA^{-1}=A^{-1}A=I.\]</div>
+            <p>La matriz inversa solo puede existir para matrices cuadradas. Además:</p>
+            <div class="callout info">\[A\text{ es inversible}\iff \det(A)\ne0.\]</div>
+          </article>
+          <article class="theory-card">
+            <h3>Método de matrices hermanadas</h3>
+            <p>Se forma la matriz aumentada \([A\mid I]\) y se aplican las mismas operaciones elementales a ambos lados hasta obtener:</p>
+            <div class="formula-panel">\[[A\mid I]\sim[I\mid A^{-1}].\]</div>
+          </article>
+        </div>
+
+        <article class="activity-card inverse-step-lab">
+          <div class="activity-header"><div><p class="tag">Gauss–Jordan</p><h3>Transformá \([A\mid I]\) paso a paso</h3></div><span class="status-pill">Ejemplo del TP</span></div>
+          <p>Partimos de \(A-I=\begin{pmatrix}1&1\\-1&2\end{pmatrix}\). Elegí la operación correcta para continuar.</p>
+          <div class="augmented-matrix" id="inverseAugmented"></div>
+          <div class="inverse-choices" id="inverseChoices"></div>
+          <div class="feedback" id="inverseFeedback" aria-live="polite"></div>
+          <button class="button ghost" id="resetInverseLab" type="button">Reiniciar procedimiento</button>
+        </article>
+
+        <article class="activity-card">
+          <div class="activity-header"><div><p class="tag">Verificación</p><h3>Comprobá la inversa</h3></div></div>
+          <button class="button primary" id="verifyInverse" type="button">Calcular \(AA^{-1}\)</button>
+          <div class="calculation-output" id="inverseVerification"></div>
+        </article>
+
+        <article class="video-card" data-video-id="lrh5MKNZihQ">
+          <div class="video-copy"><p class="tag">Video de apoyo</p><h3>Matriz inversa por Gauss–Jordan</h3><p>Compará las operaciones del video con el laboratorio interactivo.</p><button class="button secondary load-video" type="button">Cargar video</button></div>
+          <div class="video-placeholder"><span>▶</span><p>Detenelo antes de cada operación e intentá anticiparla.</p></div>
+        </article>
+      </section>
+
+      <section class="module" id="propiedades" data-module="propiedades" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 8</p><h2>Laboratorio de propiedades del determinante</h2></div>
+          <button class="complete-button" data-complete="propiedades" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <article class="activity-card property-lab">
+          <div class="activity-header"><div><p class="tag">Experimentación</p><h3>Modificá filas y observá el determinante</h3></div></div>
+          <div class="property-layout">
+            <div>
+              <div class="matrix-grid" id="propertyMatrix"></div>
+              <p class="det-readout">Determinante actual: <strong id="propertyDet"></strong></p>
+            </div>
+            <div class="property-buttons">
+              <button class="button secondary" data-property-action="swap" type="button">Intercambiar \(F_1\leftrightarrow F_2\)</button>
+              <button class="button secondary" data-property-action="scale" type="button">Multiplicar \(F_1\) por 2</button>
+              <button class="button secondary" data-property-action="duplicate" type="button">Hacer \(F_2=F_1\)</button>
+              <button class="button secondary" data-property-action="zero" type="button">Anular \(F_3\)</button>
+              <button class="button ghost" data-property-action="reset" type="button">Restablecer matriz</button>
+            </div>
+          </div>
+          <div class="feedback" id="propertyFeedback" aria-live="polite"></div>
+        </article>
+
+        <article class="activity-card">
+          <div class="activity-header"><div><p class="tag">Banco de propiedades</p><h3>Elegí la propiedad que permite calcular</h3></div></div>
+          <div id="propertyQuiz" class="choice-stack"></div>
+          <button class="button ghost" id="newPropertyQuestion" type="button">Otra propiedad</button>
+        </article>
+
+        <article class="theory-card wide property-summary">
+          <h3>Resumen esencial</h3>
+          <div class="property-grid">
+            <div>\(\det(A^t)=\det(A)\)</div>
+            <div>\(\det(AB)=\det(A)\det(B)\)</div>
+            <div>\(\det(A^m)=\det(A)^m\)</div>
+            <div>\(\det(kA)=k^n\det(A)\)</div>
+            <div>\(\det(A^{-1})=1/\det(A)\)</div>
+            <div>Matriz triangular: producto de la diagonal</div>
+          </div>
+          <div class="callout danger"><strong>No existe una propiedad general para:</strong> \(\det(A+B)\) ni \(\det(A-B)\).</div>
+        </article>
+      </section>
+
+      <section class="module" id="practica" data-module="practica" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 9</p><h2>Práctica guiada basada en el TP</h2></div>
+          <button class="complete-button" data-complete="practica" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <div class="practice-intro">
+          <p>Los ejemplos no reemplazan el intento personal. Cada botón habilita una decisión o un cálculo que conviene anticipar en papel.</p>
+        </div>
+        <article class="guided-card" data-stepper="operationPossible"></article>
+        <article class="guided-card" data-stepper="parameterDet"></article>
+        <article class="guided-card" data-stepper="matrixSystem"></article>
+        <article class="guided-card" data-stepper="detPositive"></article>
+
+        <article class="activity-card error-detective">
+          <div class="activity-header"><div><p class="tag">Detectá el error</p><h3>Resoluciones que parecen correctas</h3></div></div>
+          <div id="errorDetective"></div>
+          <button class="button ghost" id="newErrorCase" type="button">Otro caso</button>
+        </article>
+      </section>
+
+      <section class="module" id="autoevaluacion" data-module="autoevaluacion" hidden>
+        <div class="module-title">
+          <div><p class="kicker">Módulo 10</p><h2>Autoevaluación de la Unidad 2</h2></div>
+          <button class="complete-button" data-complete="autoevaluacion" type="button">Marcar módulo como revisado</button>
+        </div>
+
+        <article class="quiz-card">
+          <div class="quiz-header">
+            <div><p class="tag">10 preguntas aleatorias</p><h3>Comprobá qué temas necesitás revisar</h3></div>
+            <div class="quiz-score"><span>Mejor puntaje</span><strong id="bestScore">0/10</strong></div>
+          </div>
+          <div id="quizQuestions"></div>
+          <div class="activity-actions">
+            <button class="button primary" id="gradeQuiz" type="button">Corregir autoevaluación</button>
+            <button class="button ghost" id="newQuiz" type="button">Generar otra</button>
+          </div>
+          <div class="quiz-result" id="quizResult" aria-live="polite"></div>
+        </article>
+      </section>
+
+      <section class="module" id="materiales" data-module="materiales" hidden>
+        <div class="module-title"><div><p class="kicker">Materiales</p><h2>Videos, apuntes y archivos originales</h2></div></div>
+
+        <div class="downloads-grid">
+          <a class="download-card" href="materiales/teoria-matrices-determinantes.pdf" target="_blank" rel="noopener"><span>PDF</span><div><strong>Teoría de matrices y determinantes</strong><p>Apunte principal de la cátedra.</p></div></a>
+          <a class="download-card" href="materiales/tp-2-matrices-determinantes.pdf" target="_blank" rel="noopener"><span>TP</span><div><strong>Trabajo Práctico 2</strong><p>Enunciados de matrices y determinantes.</p></div></a>
+          <a class="download-card" href="materiales/resolucion-tp-2.pdf" target="_blank" rel="noopener"><span>✓</span><div><strong>Resolución del TP 2</strong><p>Documento base para los ejemplos guiados.</p></div></a>
+          <a class="download-card" href="materiales/resumen-y-ejemplos.pdf" target="_blank" rel="noopener"><span>R</span><div><strong>Resumen y ejemplos</strong><p>Operaciones, inversa, determinantes y propiedades.</p></div></a>
+          <a class="download-card" href="materiales/propiedades-determinantes.pdf" target="_blank" rel="noopener"><span>|A|</span><div><strong>Propiedades de determinantes</strong><p>Hoja de repaso rápido.</p></div></a>
+          <a class="download-card" href="materiales/tp-2-matrices-determinantes.tex" download><span>TeX</span><div><strong>Código LaTeX del TP</strong><p>Archivo fuente para editar.</p></div></a>
+        </div>
+
+        <h3 class="subsection-title">Presentaciones de clase</h3>
+        <div class="downloads-grid presentations">
+          <a class="download-card" href="presentaciones/01-matrices-parte-1.ppsx" download><span>1</span><div><strong>Matrices · Parte 1</strong><p>Conceptos, matrices especiales y operaciones.</p></div></a>
+          <a class="download-card" href="presentaciones/02-determinantes-calculo.ppsx" download><span>2</span><div><strong>Cálculo de determinantes</strong><p>Orden 2, Sarrus y Laplace.</p></div></a>
+          <a class="download-card" href="presentaciones/03-matriz-inversa.ppsx" download><span>3</span><div><strong>Matriz inversa</strong><p>Operaciones elementales y adjunta.</p></div></a>
+          <a class="download-card" href="presentaciones/04-ecuaciones-matriciales.ppsx" download><span>4</span><div><strong>Ecuaciones matriciales</strong><p>Ejemplos de despejes y análisis de órdenes.</p></div></a>
+          <a class="download-card" href="presentaciones/05-propiedades-determinantes.ppsx" download><span>5</span><div><strong>Propiedades del determinante</strong><p>Demostraciones, ejemplos y ejercicios.</p></div></a>
+        </div>
+
+        <h3 class="subsection-title">Videos seleccionados</h3>
+        <div class="video-grid materials-videos">
+          <article class="video-card compact-video" data-video-id="Tjrm3HsqBXE"><div class="video-copy"><p class="tag">Producto</p><h3>Multiplicación de matrices</h3><button class="button secondary load-video" type="button">Cargar video</button></div><div class="video-placeholder"><span>▶</span></div></article>
+          <article class="video-card compact-video" data-video-id="oZ_FryBrnLo"><div class="video-copy"><p class="tag">Inversibilidad</p><h3>Determinante y matriz inversa</h3><button class="button secondary load-video" type="button">Cargar video</button></div><div class="video-placeholder"><span>▶</span></div></article>
+          <article class="video-card compact-video" data-video-id="ZDiZUrfG_MI"><div class="video-copy"><p class="tag">Adjunta</p><h3>Inversa por cofactores</h3><button class="button secondary load-video" type="button">Cargar video</button></div><div class="video-placeholder"><span>▶</span></div></article>
+          <article class="video-card compact-video" data-video-id="ckeT2SIszgo"><div class="video-copy"><p class="tag">Propiedades</p><h3>Propiedades de determinantes</h3><button class="button secondary load-video" type="button">Cargar video</button></div><div class="video-placeholder"><span>▶</span></div></article>
+        </div>
+
+        <article class="callout info">
+          <strong>Publicación en GitHub Pages</strong>
+          <p>El proyecto es completamente estático: no requiere Node, servidor ni base de datos. Subí el contenido de esta carpeta a un repositorio y activá Pages desde la rama principal.</p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
