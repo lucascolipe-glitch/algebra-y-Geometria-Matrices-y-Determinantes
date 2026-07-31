@@ -431,13 +431,13 @@
       let result, explanation;
       if (operation === 'sum') {
         result = addMatrices(A,B);
-        explanation = String.raw`Se suman las entradas correspondientes: \[A+B=${matrixLatex(result)}.\]`;
+        explanation = String.raw`Se suman los coeficientes correspondientes: \[A+B=${matrixLatex(result)}.\]`;
       } else if (operation === 'difference') {
         result = addMatrices(A, scaleMatrix(B,-1));
-        explanation = String.raw`Restar es sumar la matriz opuesta: \[A-B=${matrixLatex(result)}.\]`;
+        explanation = String.raw`Se restan los coeficientes correspondientes: \[A-B=${matrixLatex(result)}.\]`;
       } else if (operation === 'scalar') {
         result = scaleMatrix(A,k);
-        explanation = String.raw`El escalar multiplica todas las entradas: \[${k}A=${matrixLatex(result)}.\]`;
+        explanation = String.raw`El escalar multiplica todas los coeficiente de la matris A: \[${k}A=${matrixLatex(result)}.\]`;
       } else {
         result = transpose(A);
         explanation = String.raw`Las filas de \(A\) pasan a ser columnas: \[A^t=${matrixLatex(result)}.\]`;
@@ -871,7 +871,7 @@
     return M[0].reduce((sum,value,j)=>sum+(j%2===0?1:-1)*value*determinant(minorMatrix(M,0,j)),0);
   }
   function matrixLatex(matrix) {
-    return String.raw`\begin{pmatrix}${matrix.map(row=>row.map(formatNumber).join('&')).join('\\')}\end{pmatrix}`;
+    return String.raw`\begin{pmatrix}${matrix.map(row=>row.map(formatNumber).join('&')).join('\\\\')}\end{pmatrix}`;
   }
   function formatNumber(value) {
     if (Math.abs(value-Math.round(value))<1e-10) return String(Math.round(value));
