@@ -276,6 +276,15 @@ img, iframe { max-width: 100%; }
   width: 100%;
 }
 
+.inverse-state-current {
+  animation: inverse-state-appear .35s ease;
+}
+
+@keyframes inverse-state-appear {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .inverse-state-label {
   margin: 0 0 8px;
   color: var(--muted);
@@ -371,8 +380,6 @@ img, iframe { max-width: 100%; }
 }
 
 
-.inverse-choices button { padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; color: var(--navy); background: #fff; font-weight: 700; }
-
 .property-layout { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; }
 #propertyMatrix { grid-template-columns: repeat(3, 52px); color: var(--navy); }
 .det-readout { text-align: center; color: var(--muted); }
@@ -467,21 +474,13 @@ img, iframe { max-width: 100%; }
   .matrix-grid .cell { min-height: 39px; }
   .det-two-layout { grid-template-columns: 1fr; }
   .det-two-layout .calculation-output { grid-column: auto; }
-  augmented-matrix {
-  grid-template-columns: repeat(4, 44px);
-  gap: 5px;
-  padding: 10px 13px;
-}
-
-.augmented-cell {
-  min-height: 38px;
-  font-size: 0.83rem;
-}
-
-.inverse-operation {
-  font-size: 0.86rem;
-}
+  .augmented-matrix {
+    grid-template-columns: repeat(4, 44px);
+    gap: 5px;
+    padding: 10px 13px;
+  }
   .augmented-cell { min-height: 38px; font-size: .83rem; }
+  .inverse-operation { font-size: .86rem; }
   .sarrus-grid { grid-template-columns: repeat(5, 44px); }
   .laplace-matrix { grid-template-columns: repeat(4, 43px); }
 }
