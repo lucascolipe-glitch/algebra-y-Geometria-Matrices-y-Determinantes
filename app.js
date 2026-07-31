@@ -666,11 +666,26 @@
     });
   }
 
+  
+
+
   const inverseStates = [
-  [[1, 1, 1, 0], [-1, 2, 0, 1]],
-  [[1, 1, 1, 0], [0, 3, 1, 1]],
-  [[1, 1, 1, 0], [0, 1, 1/3, 1/3]],
-  [[1, 0, 2/3, -1/3], [0, 1, 1/3, 1/3]]
+  [
+    [1, 1, 1, 0],
+    [-1, 2, 0, 1]
+  ],
+  [
+    [1, 1, 1, 0],
+    [0, 3, 1, 1]
+  ],
+  [
+    [1, 1, 1, 0],
+    [0, 1, 1 / 3, 1 / 3]
+  ],
+  [
+    [1, 0, 2 / 3, -1 / 3],
+    [0, 1, 1 / 3, 1 / 3]
+  ]
 ];
 
 const inverseOperations = [
@@ -715,8 +730,8 @@ function setupInverseLab() {
     ];
 
     const inv = [
-      [2/3, -1/3],
-      [1/3, 1/3]
+      [2 / 3, -1 / 3],
+      [1 / 3, 1 / 3]
     ];
 
     const product = multiplyMatrices(A, inv);
@@ -738,6 +753,152 @@ function setupInverseLab() {
 
   renderInverseLab();
 }
+
+function renderInverseLab() {
+  const history = $('#inverseAugmented');
+  const choices = $('#inverseChoices');
+  const feedback = $('#inverseFeedback');
+
+  /*
+   * Construye todas las matrices alcanzadas hasta el paso actual.
+   */
+  history.innerHTML = inverseStates
+    .slice(0, inverseStep + 1)
+    .map((matrix, index) => {
+      const cells = matrix
+        .flatMap(row =>
+          row.map((value, columnIndex) => `
+            <span
+              class="augmented-cell ${
+                columnIndex === 2 ? 'augmented-divider' : ''
+              }"
+            >
+              ${fractionHtml(value)}
+            </span>
+          `)
+        )
+        .join('');
+
+      let transition = '';
+
+      if (index === 0) {
+        transition = `
+          <p class="inverse-state-label">
+            Matriz aumentada inicial
+          </p>
+        `;
+      } else {
+        transition = String.raw`
+          <div class="inverse-transition">
+            <span class="inverse-arrow">↓</span>
+
+            <span class="inverse-operation">
+              \(${inverseOperations[index - 1].correct}\)
+            </span>
+
+            <span class="inverse-arrow">↓</span>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="inverse-state">
+          ${transition}
+
+          <div class="augmented-matrix">
+            ${cells}
+          </div>
+        </div>
+      `;
+    })
+    .join('');
+
+  typeset(history);
+
+  /*
+   * Si ya se hicieron las tres operaciones, termina.
+   */
+  if (inverseStep >= inverseOperations.length) {
+    choices.innerHTML = String.raw`
+      <div class="callout info">
+        <strong>Procedimiento terminado.</strong>
+
+        <p>
+          La mitad derecha es
+          \[
+            A^{-1}
+            =
+            \begin{pmatrix}
+              \frac23 & -\frac13\\
+              \frac13 & \frac13
+            \end{pmatrix}.
+          \]
+        </p>
+      </div>
+    `;
+
+    feedback.className = 'feedback success';
+    feedback.textContent =
+      'Llegaste a la identidad en el lado izquierdo.';
+
+    markCompleted('activity:inverse-lab');
+    typeset(choices);
+
+    return;
+  }
+
+  const operation = inverseOperations[inverseStep];
+
+  choices.innerHTML = operation.choices
+    .map(choice => String.raw`
+      <button
+        type="button"
+        data-op="${escapeHtml(choice)}"
+      >
+        \(${choice}\)
+      </button>
+    `)
+    .join('');
+
+  feedback.className = 'feedback';
+  feedback.textContent = '';
+
+  choices.onclick = event => {
+    const button = event.target.closest('button');
+
+    if (!button) return;
+
+    const isCorrect =
+      button.dataset.op === operation.correct;
+
+    feedback.className = `feedback ${
+      isCorrect ? 'success' : 'error'
+    }`;
+
+    feedback.textContent = isCorrect
+      ? 'Operación correcta. Se aplica simultáneamente a ambos lados.'
+      : 'Esa operación no acerca la parte izquierda a la identidad. Probá otra.';
+
+    if (!isCorrect) return;
+
+    $$('button', choices).forEach(choiceButton => {
+      choiceButton.disabled = true;
+    });
+
+    inverseStep++;
+
+    setTimeout(() => {
+      renderInverseLab();
+    }, 350);
+  };
+
+  typeset(choices);
+}
+
+
+
+
+  
 
 Agregá esta función auxiliar:
 
