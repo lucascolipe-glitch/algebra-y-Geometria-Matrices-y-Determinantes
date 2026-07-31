@@ -667,55 +667,239 @@
   }
 
   const inverseStates = [
-    [[1,1,1,0],[-1,2,0,1]],
-    [[1,1,1,0],[0,3,1,1]],
-    [[1,1,1,0],[0,1,1/3,1/3]],
-    [[1,0,2/3,-1/3],[0,1,1/3,1/3]]
-  ];
-  const inverseOperations = [
-    { correct: String.raw`F_2\leftarrow F_1+F_2`, choices: [String.raw`F_2\leftarrow F_1+F_2`,String.raw`F_1\leftrightarrow F_2`,String.raw`F_2\leftarrow2F_2`] },
-    { correct: String.raw`F_2\leftarrow\frac13F_2`, choices: [String.raw`F_2\leftarrow\frac13F_2`,String.raw`F_1\leftarrow F_1-F_2`,String.raw`F_2\leftarrow3F_2`] },
-    { correct: String.raw`F_1\leftarrow F_1-F_2`, choices: [String.raw`F_1\leftarrow F_1-F_2`,String.raw`F_2\leftarrow F_2-F_1`,String.raw`F_1\leftarrow F_1+F_2`] }
-  ];
-  let inverseStep = 0;
-  function setupInverseLab() {
-    $('#resetInverseLab').addEventListener('click', () => { inverseStep=0; renderInverseLab(); });
-    $('#verifyInverse').addEventListener('click', () => {
-      const A = [[1,1],[-1,2]], inv = [[2/3,-1/3],[1/3,1/3]];
-      const product = multiplyMatrices(A,inv);
-      $('#inverseVerification').innerHTML = String.raw`\[${matrixLatex(A)}${matrixLatex(inv)}=${matrixLatex(product)}=I_2.\]`;
-      markCompleted('activity:inverse-verify');
-      typeset($('#inverseVerification'));
-    });
+  [[1, 1, 1, 0], [-1, 2, 0, 1]],
+  [[1, 1, 1, 0], [0, 3, 1, 1]],
+  [[1, 1, 1, 0], [0, 1, 1/3, 1/3]],
+  [[1, 0, 2/3, -1/3], [0, 1, 1/3, 1/3]]
+];
+
+const inverseOperations = [
+  {
+    correct: String.raw`F_2\leftarrow F_1+F_2`,
+    choices: [
+      String.raw`F_2\leftarrow F_1+F_2`,
+      String.raw`F_1\leftrightarrow F_2`,
+      String.raw`F_2\leftarrow2F_2`
+    ]
+  },
+  {
+    correct: String.raw`F_2\leftarrow\frac13F_2`,
+    choices: [
+      String.raw`F_2\leftarrow\frac13F_2`,
+      String.raw`F_1\leftarrow F_1-F_2`,
+      String.raw`F_2\leftarrow3F_2`
+    ]
+  },
+  {
+    correct: String.raw`F_1\leftarrow F_1-F_2`,
+    choices: [
+      String.raw`F_1\leftarrow F_1-F_2`,
+      String.raw`F_2\leftarrow F_2-F_1`,
+      String.raw`F_1\leftarrow F_1+F_2`
+    ]
+  }
+];
+
+let inverseStep = 0;
+
+function setupInverseLab() {
+  $('#resetInverseLab').addEventListener('click', () => {
+    inverseStep = 0;
     renderInverseLab();
-  }
-  function renderInverseLab() {
-    const matrix = inverseStates[inverseStep];
-    $('#inverseAugmented').innerHTML = matrix.flatMap(row => row.map((value,j) => `<span class="augmented-cell ${j===2?'augmented-divider':''}">${fractionHtml(value)}</span>`)).join('');
-    const choices = $('#inverseChoices');
-    if (inverseStep >= inverseOperations.length) {
-      choices.innerHTML = String.raw`<div class="callout info"><strong>Procedimiento terminado.</strong><p>La mitad derecha es \(A^{-1}=\begin{pmatrix}\frac23&-\frac13\\\frac13&\frac13\end{pmatrix}\).</p></div>`;
-      $('#inverseFeedback').className = 'feedback success';
-      $('#inverseFeedback').textContent = 'Llegaste a la identidad en el lado izquierdo.';
-      markCompleted('activity:inverse-lab');
-      typeset(choices);
-      return;
-    }
-    const op = inverseOperations[inverseStep];
-    choices.innerHTML = op.choices.map(choice => String.raw`<button type="button" data-op="${escapeHtml(choice)}">\(${choice}\)</button>`).join('');
-    choices.onclick = event => {
-      const button = event.target.closest('button');
-      if (!button) return;
-      const ok = button.dataset.op === op.correct;
-      const feedback = $('#inverseFeedback');
-      feedback.className = `feedback ${ok?'success':'error'}`;
-      feedback.textContent = ok ? 'Operación correcta. Se aplica simultáneamente a ambos lados.' : 'Esa operación no acerca la parte izquierda a la identidad. Probá otra.';
-      if (ok) { inverseStep++; setTimeout(renderInverseLab, 350); }
-    };
-    $('#inverseFeedback').className = 'feedback';
-    $('#inverseFeedback').textContent = '';
+  });
+
+  $('#verifyInverse').addEventListener('click', () => {
+    const A = [
+      [1, 1],
+      [-1, 2]
+    ];
+
+    const inv = [
+      [2/3, -1/3],
+      [1/3, 1/3]
+    ];
+
+    const product = multiplyMatrices(A, inv);
+
+    $('#inverseVerification').innerHTML = String.raw`
+      \[
+        ${matrixLatex(A)}
+        ${matrixLatex(inv)}
+        =
+        ${matrixLatex(product)}
+        =
+        I_2.
+      \]
+    `;
+
+    markCompleted('activity:inverse-verify');
+    typeset($('#inverseVerification'));
+  });
+
+  renderInverseLab();
+}
+
+Agregá esta función auxiliar:
+
+function createAugmentedMatrixHtml(matrix, isCurrent = false) {
+  const cells = matrix
+    .flatMap(row =>
+      row.map((value, columnIndex) => `
+        <span class="augmented-cell ${
+          columnIndex === 2 ? 'augmented-divider' : ''
+        }">
+          ${fractionHtml(value)}
+        </span>
+      `)
+    )
+    .join('');
+
+  return `
+    <div class="augmented-matrix ${isCurrent ? 'inverse-new-state' : ''}">
+      ${cells}
+    </div>
+  `;
+}
+
+Y reemplazá tu función renderInverseLab() por esta:
+
+function renderInverseLab() {
+  const history = $('#inverseAugmented');
+  const choices = $('#inverseChoices');
+  const feedback = $('#inverseFeedback');
+
+  /*
+   * Mostramos desde la matriz inicial hasta la matriz
+   * correspondiente al paso actual.
+   */
+  history.innerHTML = inverseStates
+    .slice(0, inverseStep + 1)
+    .map((matrix, index) => {
+      const operation =
+        index === 0
+          ? `
+            <div class="inverse-start-label">
+              Matriz aumentada inicial
+            </div>
+          `
+          : String.raw`
+            <div class="inverse-transition">
+              <span class="inverse-operation">
+                \(${inverseOperations[index - 1].correct}\)
+              </span>
+
+              <span class="inverse-arrow" aria-hidden="true">↓</span>
+            </div>
+          `;
+
+      return `
+        <div class="inverse-state">
+          ${operation}
+
+          ${createAugmentedMatrixHtml(
+            matrix,
+            index === inverseStep
+          )}
+        </div>
+      `;
+    })
+    .join('');
+
+  /*
+   * El último estado contiene expresiones de MathJax
+   * en las operaciones elementales.
+   */
+  typeset(history);
+
+  /*
+   * Cuando se realizaron todas las operaciones,
+   * mostramos el resultado final.
+   */
+  if (inverseStep >= inverseOperations.length) {
+    choices.innerHTML = String.raw`
+      <div class="callout info">
+        <strong>Procedimiento terminado.</strong>
+
+        <p>
+          La mitad derecha es
+          \[
+            A^{-1}
+            =
+            \begin{pmatrix}
+              \frac23 & -\frac13\\
+              \frac13 & \frac13
+            \end{pmatrix}.
+          \]
+        </p>
+      </div>
+    `;
+
+    feedback.className = 'feedback success';
+    feedback.textContent =
+      'Llegaste a la identidad en el lado izquierdo.';
+
+    markCompleted('activity:inverse-lab');
     typeset(choices);
+
+    return;
   }
+
+  /*
+   * Operación que corresponde al paso actual.
+   */
+  const operation = inverseOperations[inverseStep];
+
+  choices.innerHTML = operation.choices
+    .map(choice => String.raw`
+      <button
+        type="button"
+        data-op="${escapeHtml(choice)}"
+      >
+        \(${choice}\)
+      </button>
+    `)
+    .join('');
+
+  feedback.className = 'feedback';
+  feedback.textContent = '';
+
+  choices.onclick = event => {
+    const button = event.target.closest('button');
+
+    if (!button) return;
+
+    const isCorrect =
+      button.dataset.op === operation.correct;
+
+    feedback.className = `feedback ${
+      isCorrect ? 'success' : 'error'
+    }`;
+
+    feedback.textContent = isCorrect
+      ? 'Operación correcta. Se aplica simultáneamente a ambos lados.'
+      : 'Esa operación no acerca la parte izquierda a la identidad. Probá otra.';
+
+    if (!isCorrect) return;
+
+    /*
+     * Evitamos que se pulse más de una opción
+     * mientras aparece el siguiente paso.
+     */
+    $$('button', choices).forEach(choiceButton => {
+      choiceButton.disabled = true;
+    });
+
+    button.classList.add('correct');
+
+    inverseStep++;
+
+    setTimeout(() => {
+      renderInverseLab();
+    }, 350);
+  };
+
+  typeset(choices);
+}
 
   let propertyMatrix = [[1,2,3],[0,2,1],[0,0,4]];
   function setupPropertyLab() {
