@@ -76,7 +76,7 @@
         { label: 'Calcular el determinante', html: String.raw`\[\det(A)=2k-|k-2|.\]` },
         { label: 'Plantear la ecuación', html: String.raw`\[2k-|k-2|=8\iff |k-2|=2k-8.\] Además, el miembro derecho debe ser no negativo.` },
         { label: 'Caso k ≥ 2', html: String.raw`Si \(k\ge2\), entonces \(|k-2|=k-2\). Así, \(2k-(k-2)=8\), de donde \(k=6\), que satisface la condición del caso.` },
-        { label: 'Caso k < 2', html: String.raw`Si \(k<2\), entonces \(|k-2|=2-k\). La ecuación da \(3k=10\), es decir \(k=\tfrac{10}{3}\), pero ese valor no cumple \(k<2\).` },
+        { label: 'Caso k < 2', html: String.raw`Si \(k\lt 2\), entonces \(|k-2|=2-k\). La ecuación da \(3k=10\), es decir \(k=\tfrac{10}{3}\), pero ese valor no cumple \(k\lt 2\).` },
         { label: 'Solución', html: String.raw`\[\boxed{k=6}.\]` }
       ]
     },
