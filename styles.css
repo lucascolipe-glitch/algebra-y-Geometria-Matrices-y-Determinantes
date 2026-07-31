@@ -257,11 +257,120 @@ img, iframe { max-width: 100%; }
 .laplace-controls { display: grid; gap: 10px; }
 .laplace-result { margin-top: 18px; padding: 18px; border-radius: 14px; background: var(--surface-2); overflow-x: auto; }
 
-.augmented-matrix { grid-template-columns: repeat(4, 58px); color: var(--navy); margin: 18px auto; }
-.augmented-matrix::before, .augmented-matrix::after { top: 2px; bottom: 2px; }
-.augmented-cell { min-height: 44px; display: grid; place-items: center; border-radius: 7px; background: var(--surface-2); font-weight: 750; }
-.augmented-divider { border-left: 3px solid var(--navy); }
-.inverse-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+/* =====================================================
+   MATRIZ INVERSA: HISTORIAL VERTICAL
+   ===================================================== */
+
+.inverse-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.inverse-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.inverse-state-label {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.augmented-matrix {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 58px);
+  gap: 7px;
+  width: max-content;
+  padding: 12px 18px;
+  margin: 0 auto;
+  color: var(--navy);
+}
+
+.augmented-matrix::before,
+.augmented-matrix::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 9px;
+  border-top: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+}
+
+.augmented-matrix::before {
+  left: 0;
+  border-left: 2px solid currentColor;
+}
+
+.augmented-matrix::after {
+  right: 0;
+  border-right: 2px solid currentColor;
+}
+
+.augmented-cell {
+  position: relative;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: var(--surface-2);
+  font-weight: 750;
+}
+
+.augmented-divider {
+  border-left: 3px solid var(--navy);
+}
+
+.inverse-transition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin: 9px 0;
+}
+
+.inverse-operation {
+  padding: 5px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--navy);
+  background: var(--blue-soft);
+  font-weight: 700;
+}
+
+.inverse-arrow {
+  color: var(--blue);
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.inverse-choices {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.inverse-choices button {
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--navy);
+  background: #fff;
+  font-weight: 700;
+}
+
+
 .inverse-choices button { padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; color: var(--navy); background: #fff; font-weight: 700; }
 
 .property-layout { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; }
@@ -358,7 +467,20 @@ img, iframe { max-width: 100%; }
   .matrix-grid .cell { min-height: 39px; }
   .det-two-layout { grid-template-columns: 1fr; }
   .det-two-layout .calculation-output { grid-column: auto; }
-  .augmented-matrix { grid-template-columns: repeat(5, 44px); padding-inline: 13px; }
+  augmented-matrix {
+  grid-template-columns: repeat(4, 44px);
+  gap: 5px;
+  padding: 10px 13px;
+}
+
+.augmented-cell {
+  min-height: 38px;
+  font-size: 0.83rem;
+}
+
+.inverse-operation {
+  font-size: 0.86rem;
+}
   .augmented-cell { min-height: 38px; font-size: .83rem; }
   .sarrus-grid { grid-template-columns: repeat(5, 44px); }
   .laplace-matrix { grid-template-columns: repeat(4, 43px); }
