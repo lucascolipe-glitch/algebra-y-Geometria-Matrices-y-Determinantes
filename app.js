@@ -871,7 +871,7 @@
     return M[0].reduce((sum,value,j)=>sum+(j%2===0?1:-1)*value*determinant(minorMatrix(M,0,j)),0);
   }
   function matrixLatex(matrix) {
-    return String.raw`\begin{pmatrix}${matrix.map(row=>row.map(formatNumber).join('&')).join('\\\\')}\end{pmatrix}`;
+    return String.raw`\begin{pmatrix}${matrix.map(row=>row.map(formatNumber).join('&')).join(String.raw`\\`)}\end{pmatrix}`;
   }
   function formatNumber(value) {
     if (Math.abs(value-Math.round(value))<1e-10) return String(Math.round(value));
