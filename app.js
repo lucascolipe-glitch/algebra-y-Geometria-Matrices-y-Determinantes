@@ -897,11 +897,6 @@ function renderInverseLab() {
 
 
 
-
-  
-
-Agregá esta función auxiliar:
-
 function createAugmentedMatrixHtml(matrix, isCurrent = false) {
   const cells = matrix
     .flatMap(row =>
