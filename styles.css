@@ -257,7 +257,7 @@ img, iframe { max-width: 100%; }
 .laplace-controls { display: grid; gap: 10px; }
 .laplace-result { margin-top: 18px; padding: 18px; border-radius: 14px; background: var(--surface-2); overflow-x: auto; }
 
-.augmented-matrix { grid-template-columns: repeat(5, 58px); color: var(--navy); margin: 18px auto; }
+.augmented-matrix { grid-template-columns: repeat(4, 58px); color: var(--navy); margin: 18px auto; }
 .augmented-matrix::before, .augmented-matrix::after { top: 2px; bottom: 2px; }
 .augmented-cell { min-height: 44px; display: grid; place-items: center; border-radius: 7px; background: var(--surface-2); font-weight: 750; }
 .augmented-divider { border-left: 3px solid var(--navy); }
