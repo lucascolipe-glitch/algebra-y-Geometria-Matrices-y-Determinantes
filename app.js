@@ -15,8 +15,8 @@
       source: 'Basado en el ejercicio 1(a) del TP 2',
       statement: String.raw`\[A=(a_{ij})_{3\times3},\qquad a_{ij}=\begin{cases}|j-i|,& i\ge j,\\0,&i\lt j.\end{cases}\]`, 
       steps: [
-        { label: 'Interpretar la condición', html: String.raw`Debemos recorrer todas las parejas \((i,j)\) con \(i,j\in\{1,2,3\}\). Sobre la diagonal, donde \(i<j\), la definición asigna directamente cero.` },
-        { label: 'Completar la primera fila', html: String.raw`Para \(i=1\): \(a_{11}=|1-1|=0\), mientras que \(a_{12}=a_{13}=0\) porque \(1<2\) y \(1<3\).` },
+        { label: 'Interpretar la condición', html: String.raw`Debemos recorrer todas las parejas \((i,j)\) con \(i,j\in\{1,2,3\}\). Sobre la diagonal, donde \(i\lt j\), la definición asigna directamente cero.` },
+        { label: 'Completar la primera fila', html: String.raw`Para \(i=1\): \(a_{11}=|1-1|=0\), mientras que \(a_{12}=a_{13}=0\) porque \(1\lt 2\) y \(1\lt3\).` },
         { label: 'Completar la segunda fila', html: String.raw`Para \(i=2\): \(a_{21}=|1-2|=1\), \(a_{22}=0\) y \(a_{23}=0\).` },
         { label: 'Completar la tercera fila', html: String.raw`Para \(i=3\): \(a_{31}=|1-3|=2\), \(a_{32}=|2-3|=1\) y \(a_{33}=0\).` },
         { label: 'Clasificar', html: String.raw`\[A=\begin{pmatrix}0&0&0\\1&0&0\\2&1&0\end{pmatrix}.\] Es triangular inferior porque todos los elementos por encima de la diagonal principal son nulos. No es simétrica ni escalar.` }
