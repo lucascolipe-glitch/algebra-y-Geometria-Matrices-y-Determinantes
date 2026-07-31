@@ -13,7 +13,7 @@
     buildMatrix: {
       title: 'Construcción de una matriz definida por índices',
       source: 'Basado en el ejercicio 1(a) del TP 2',
-      statement: String.raw`\[A=(a_{ij})_{3\times3},\qquad a_{ij}=\begin{cases}|j-i|,& i\ge j,\\0,&i<j.\end{cases}\]`,
+      statement: String.raw`\[A=(a_{ij})_{3\times3},\qquad a_{ij}=\begin{cases}|j-i|,& i\ge j,\\0,&i\lt j.\end{cases}\]`,
       steps: [
         { label: 'Interpretar la condición', html: String.raw`Debemos recorrer todas las parejas \((i,j)\) con \(i,j\in\{1,2,3\}\). Sobre la diagonal, donde \(i<j\), la definición asigna directamente cero.` },
         { label: 'Completar la primera fila', html: String.raw`Para \(i=1\): \(a_{11}=|1-1|=0\), mientras que \(a_{12}=a_{13}=0\) porque \(1<2\) y \(1<3\).` },
