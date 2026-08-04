@@ -134,7 +134,12 @@
     { field: 'C1', row: 1, col: 1, prompt: '¿Qué representa la entrada 170 de C₁?', type: 'select', options: ['Gasolina de enero','Diesel de febrero','Kerosene de marzo','Diesel de enero'], answer: 'Diesel de febrero' },
     { field: 'C2', row: 2, col: 0, prompt: '¿Cuántos barriles de gasolina produjo el Campo 2 durante marzo?', type: 'number', answer: 230 },
     { field: 'C3', row: 0, col: 2, prompt: '¿Cuántos barriles de kerosene produjo el Campo 3 durante enero?', type: 'number', answer: 160 },
-    { field: 'C1', row: 2, col: 1, prompt: '¿Qué entrada representa el diesel del Campo 1 durante marzo?', type: 'select', options: ['a₁₂','a₂₃','a₃₂','a₃₁'], answer: 'a₃₂' }
+    { field: 'C1', row: 2, col: 1, prompt: '¿Qué entrada representa el diesel del Campo 1 durante marzo?', type: 'select', options: [
+      { value: 'a₁₂', label: String.raw`\(a_{12}\)` },
+      { value: 'a₂₃', label: String.raw`\(a_{23}\)` },
+      { value: 'a₃₂', label: String.raw`\(a_{32}\)` },
+      { value: 'a₃₁', label: String.raw`\(a_{31}\)` }
+    ], answer: 'a₃₂' }
   ];
 
   const orderChallenges = [
@@ -238,6 +243,26 @@
     if (!window.MathJax?.typesetPromise) return;
     const targets = elements ? (Array.isArray(elements) ? elements : [elements]) : undefined;
     window.MathJax.typesetPromise(targets).catch(() => {});
+  }
+
+
+  function selectedRadioValue(name, root = document) {
+    return $$('input[type="radio"]', root).find((input) => input.name === name && input.checked)?.value || '';
+  }
+
+  function renderChoiceCards(name, options, ariaLabel, extraClass = '', inputType = 'radio') {
+    const role = inputType === 'radio' ? 'radiogroup' : 'group';
+    return `<div class="choice-cards ${extraClass}" role="${role}" aria-label="${escapeHtml(ariaLabel)}">
+      ${options.map((option, index) => {
+        const value = typeof option === 'string' ? String(index) : String(option.value);
+        const label = typeof option === 'string' ? option : option.label;
+        const checkboxClass = inputType === 'checkbox' ? ' choice-card--checkbox' : '';
+        return `<label class="choice-card${checkboxClass}">
+          <input type="${inputType}" name="${escapeHtml(name)}" value="${escapeHtml(value)}">
+          <span class="choice-card__content">${label}</span>
+        </label>`;
+      }).join('')}
+    </div>`;
   }
   function showToast(message) {
     const toast = $('#toast');
@@ -389,29 +414,50 @@
 
   function setupTypeClassifier() {
     const root = $('#typeClassifier');
-    root.innerHTML = typeCases.map((item,index) => `
-      <div class="classification-item" data-case="${index}">
+    const categoryOptions = typeCategories.map((category) => ({
+      value: category,
+      label: capitalize(category)
+    }));
+
+    root.innerHTML = typeCases.map((item, index) => `
+      <fieldset class="classification-item" data-case="${index}">
+        <legend class="sr-only">Clasificación de la matriz ${index + 1}</legend>
         <div class="matrix-grid" style="--cols:${item.matrix[0].length}">${item.matrix.flat().map(v => `<span class="cell">${v}</span>`).join('')}</div>
-        <div class="category-options">${typeCategories.map(category => `<label class="check-chip"><input type="checkbox" value="${category}"><span>${capitalize(category)}</span></label>`).join('')}</div>
-      </div>`).join('');
+        ${renderChoiceCards(`matrix-type-${index}`, categoryOptions, `Tipos de la matriz ${index + 1}`, 'choice-cards--categories', 'checkbox')}
+      </fieldset>`).join('');
+    typeset(root);
+
     $('#checkTypes').addEventListener('click', () => {
       let correct = 0;
-      $$('.classification-item', root).forEach((item,index) => {
+      $$('.classification-item', root).forEach((item, index) => {
         const selected = $$('input:checked', item).map(input => input.value).sort();
         const expected = [...typeCases[index].answers].sort();
         const ok = JSON.stringify(selected) === JSON.stringify(expected);
+
         item.style.borderColor = ok ? '#8bc9a7' : '#e6a39d';
         item.style.background = ok ? 'var(--green-soft)' : 'var(--red-soft)';
+        $$('.choice-card', item).forEach((card) => {
+          const input = $('input', card);
+          const shouldBeSelected = expected.includes(input.value);
+          card.classList.toggle('correct', input.checked && shouldBeSelected);
+          card.classList.toggle('wrong', input.checked && !shouldBeSelected);
+          card.classList.toggle('missed', !input.checked && shouldBeSelected);
+        });
         if (ok) correct++;
       });
+
       const feedback = $('#typeFeedback');
       feedback.className = `feedback ${correct === typeCases.length ? 'success' : 'info'}`;
-      feedback.innerHTML = correct === typeCases.length ? '¡Excelente! Reconociste que una matriz puede pertenecer a varias clases.' : `Clasificaste correctamente ${correct} de ${typeCases.length}. Revisá especialmente las matrices diagonales: también son triangulares y simétricas.`;
+      feedback.innerHTML = correct === typeCases.length
+        ? '¡Excelente! Reconociste que una matriz puede pertenecer a varias clases.'
+        : `Clasificaste correctamente ${correct} de ${typeCases.length}. Las tarjetas verdes eran correctas; las tarjetas punteadas también debían seleccionarse.`;
       if (correct === typeCases.length) markCompleted('activity:types');
     });
+
     $('#resetTypes').addEventListener('click', () => {
-      $$('input', root).forEach(input => input.checked = false);
+      $$('input', root).forEach(input => { input.checked = false; });
       $$('.classification-item', root).forEach(item => { item.removeAttribute('style'); });
+      $$('.choice-card', root).forEach(card => card.classList.remove('correct', 'wrong', 'missed'));
       $('#typeFeedback').className = 'feedback';
       $('#typeFeedback').textContent = '';
     });
@@ -457,23 +503,45 @@
   }
 
   function setupOrderChallenge() {
-    orderChallengeIndex = Math.floor(Math.random()*orderChallenges.length);
+    orderChallengeIndex = Math.floor(Math.random() * orderChallenges.length);
+
     const render = () => {
       const q = orderChallenges[orderChallengeIndex];
-      $('#orderChallenge').innerHTML = String.raw`<div class="choice-card"><p>¿Está definida la operación \(${q.expression}\)?</p><div class="choice-options"><button type="button" data-answer="true">Se puede</button><button type="button" data-answer="false">No se puede</button></div><div class="feedback"></div></div>`;
-      typeset($('#orderChallenge'));
-      $$('.choice-options button', $('#orderChallenge')).forEach(button => button.addEventListener('click', () => {
-        const answer = button.dataset.answer === 'true';
+      const root = $('#orderChallenge');
+      root.innerHTML = String.raw`<div class="selection-question">
+        <p>¿Está definida la operación \(${q.expression}\)?</p>
+        ${renderChoiceCards('order-challenge', [
+          { value: 'true', label: 'Se puede' },
+          { value: 'false', label: 'No se puede' }
+        ], 'Decidir si la operación está definida', 'choice-cards--two')}
+        <div class="feedback"></div>
+      </div>`;
+
+      root.onchange = (event) => {
+        const input = event.target.closest('input[type="radio"]');
+        if (!input || input.disabled) return;
+        const answer = input.value === 'true';
         const ok = answer === q.possible;
-        button.classList.add(ok ? 'correct' : 'wrong');
-        const feedback = $('.feedback', $('#orderChallenge'));
+        const selectedCard = input.closest('.choice-card');
+        $$('.choice-card', root).forEach(card => card.classList.remove('correct', 'wrong'));
+        selectedCard.classList.add(ok ? 'correct' : 'wrong');
+
+        const feedback = $('.feedback', root);
         feedback.className = `feedback ${ok ? 'success' : 'error'}`;
         feedback.innerHTML = String.raw`${ok ? 'Correcto.' : 'Revisá los órdenes.'} ${q.explanation}${q.result ? String.raw` El resultado tiene orden \(${q.result}\).` : ''}`;
-        if (ok) markCompleted('activity:order');
+        if (ok) {
+          $$('input[type="radio"]', root).forEach(radio => { radio.disabled = true; });
+          markCompleted('activity:order');
+        }
         typeset(feedback);
-      }));
+      };
+      typeset(root);
     };
-    $('#newOrderChallenge').addEventListener('click', () => { orderChallengeIndex = (orderChallengeIndex+1)%orderChallenges.length; render(); });
+
+    $('#newOrderChallenge').addEventListener('click', () => {
+      orderChallengeIndex = (orderChallengeIndex + 1) % orderChallenges.length;
+      render();
+    });
     render();
   }
 
@@ -506,22 +574,34 @@
 
   function setupInverseSideActivity() {
     const root = $('#inverseSideActivity');
-    root.innerHTML = inverseSideCases.map((item,index) => String.raw`
-      <div class="choice-card" data-index="${index}"><p>De \(${item.statement}\), elegí el despeje correcto:</p><div class="choice-options">${item.choices.map((choice,i) => String.raw`<button type="button" data-choice="${i}">\(${choice}\)</button>`).join('')}</div><div class="feedback"></div></div>`).join('');
+    root.innerHTML = inverseSideCases.map((item, index) => String.raw`
+      <div class="selection-question" data-index="${index}">
+        <p>De \(${item.statement}\), elegí el despeje correcto:</p>
+        ${renderChoiceCards(`inverse-side-${index}`, item.choices, `Despeje correcto del caso ${index + 1}`, 'choice-cards--two')}
+        <div class="feedback"></div>
+      </div>`).join('');
+
     let solved = 0;
-    $$('.choice-card', root).forEach(card => {
-      card.addEventListener('click', event => {
-        const button = event.target.closest('button');
-        if (!button || card.dataset.solved) return;
-        const item = inverseSideCases[Number(card.dataset.index)];
-        const ok = Number(button.dataset.choice) === item.answer;
-        button.classList.add(ok ? 'correct' : 'wrong');
-        const feedback = $('.feedback', card);
-        feedback.className = `feedback ${ok ? 'success' : 'error'}`;
-        feedback.textContent = item.explanation;
-        if (ok) { card.dataset.solved = 'true'; solved++; }
-        if (solved === inverseSideCases.length) markCompleted('activity:inverse-side');
-      });
+    root.addEventListener('change', (event) => {
+      const input = event.target.closest('input[type="radio"]');
+      if (!input || input.disabled) return;
+      const question = input.closest('.selection-question');
+      if (question.dataset.solved) return;
+
+      const item = inverseSideCases[Number(question.dataset.index)];
+      const ok = Number(input.value) === item.answer;
+      $$('.choice-card', question).forEach(card => card.classList.remove('correct', 'wrong'));
+      input.closest('.choice-card').classList.add(ok ? 'correct' : 'wrong');
+
+      const feedback = $('.feedback', question);
+      feedback.className = `feedback ${ok ? 'success' : 'error'}`;
+      feedback.textContent = item.explanation;
+      if (ok) {
+        question.dataset.solved = 'true';
+        $$('input[type="radio"]', question).forEach(radio => { radio.disabled = true; });
+        solved++;
+      }
+      if (solved === inverseSideCases.length) markCompleted('activity:inverse-side');
     });
     typeset(root);
   }
@@ -557,21 +637,43 @@
     activeOilField = q.field;
     $$('[data-field]', $('#oilTabs')).forEach(b => b.classList.toggle('active', b.dataset.field === activeOilField));
     renderOilTable();
-    const input = q.type === 'number' ? '<label>Respuesta en barriles<input id="oilAnswerInput" type="number" inputmode="numeric"></label>' : `<label>Elegí una opción<select id="oilAnswerInput"><option value="">Seleccionar…</option>${q.options.map(option => `<option>${option}</option>`).join('')}</select></label>`;
-    $('#oilQuestion').innerHTML = `<p><strong>${q.prompt}</strong></p>${input}`;
+
+    const answerControl = q.type === 'number'
+      ? '<label class="number-answer">Respuesta en barriles<input id="oilAnswerInput" type="number" inputmode="numeric"></label>'
+      : renderChoiceCards(
+          'oilAnswer',
+          q.options.map((option) => typeof option === 'string' ? { value: option, label: option } : option),
+          q.prompt,
+          'choice-cards--four'
+        );
+
+    const root = $('#oilQuestion');
+    root.innerHTML = `<p><strong>${q.prompt}</strong></p>${answerControl}`;
     $('#oilFeedback').className = 'feedback';
     $('#oilFeedback').textContent = '';
+    typeset(root);
   }
+
   function checkOilAnswer() {
     const q = oilQuestions[oilQuestionIndex];
-    const input = $('#oilAnswerInput');
-    const value = q.type === 'number' ? Number(input.value) : input.value;
+    const value = q.type === 'number'
+      ? Number($('#oilAnswerInput').value)
+      : selectedRadioValue('oilAnswer', $('#oilQuestion'));
     const ok = value === q.answer;
     const feedback = $('#oilFeedback');
     feedback.className = `feedback ${ok ? 'success' : 'error'}`;
     feedback.textContent = ok ? 'Correcto. Leíste la fila y la columna adecuadas.' : 'Revisá qué representa la fila y qué representa la columna.';
+
+    if (q.type !== 'number') {
+      $$('.choice-card', $('#oilQuestion')).forEach((card) => {
+        const input = $('input', card);
+        card.classList.toggle('correct', input.value === q.answer);
+        card.classList.toggle('wrong', input.checked && input.value !== q.answer);
+      });
+    }
     if (ok) markCompleted('activity:oil');
   }
+
   function renderOilComparison() {
     const desired = scaleMatrix(oilFields.C1, 1.1).map(row => row.map(value => Math.round(value*10)/10));
     const diff = addMatrices(oilFields.C2, scaleMatrix(desired,-1));
@@ -643,28 +745,45 @@
   function setupLaplaceLab() {
     const M = [[1,1,2,1],[0,-2,2,1],[0,5,2,-3],[0,2,-2,3]];
     const root = $('#laplaceMatrix');
-    root.innerHTML = M.flatMap((row,i) => row.map((value,j) => `<button class="cell" data-row="${i}" data-col="${j}" type="button">${value}</button>`)).join('');
+    root.innerHTML = M.flatMap((row, i) => row.map((value, j) => `<button class="cell" data-row="${i}" data-col="${j}" type="button">${value}</button>`)).join('');
+
     const controls = $('#laplaceControls');
-    controls.innerHTML = `<p><strong>Elegí una línea:</strong></p><div class="choice-options">${[0,1,2,3].map(i => `<button type="button" data-line-type="row" data-line="${i}">Fila ${i+1}</button>`).join('')}</div><div class="choice-options">${[0,1,2,3].map(i => `<button type="button" data-line-type="col" data-line="${i}">Columna ${i+1}</button>`).join('')}</div>`;
-    controls.addEventListener('click', event => {
-      const button = event.target.closest('[data-line-type]');
-      if (!button) return;
-      const type = button.dataset.lineType, line = Number(button.dataset.line);
-      $$('button.cell', root).forEach(cell => cell.classList.toggle('line-selected', type==='row' ? Number(cell.dataset.row)===line : Number(cell.dataset.col)===line));
-      const entries = type==='row' ? M[line].map((value,j)=>({value,i:line,j})) : M.map((row,i)=>({value:row[line],i,j:line}));
-      const terms = entries.filter(item=>item.value!==0).map(item => {
-        const minor = minorMatrix(M,item.i,item.j);
-        const cof = ((item.i+item.j)%2===0?1:-1)*determinant(minor);
+    const lineOptions = [
+      ...[0,1,2,3].map(i => ({ value: `row-${i}`, label: `Fila ${i + 1}` })),
+      ...[0,1,2,3].map(i => ({ value: `col-${i}`, label: `Columna ${i + 1}` }))
+    ];
+    controls.innerHTML = `<p><strong>Elegí una línea:</strong></p>${renderChoiceCards('laplaceLine', lineOptions, 'Línea para desarrollar el determinante', 'choice-cards--laplace')}`;
+
+    controls.addEventListener('change', (event) => {
+      const input = event.target.closest('input[type="radio"]');
+      if (!input) return;
+      const [type, lineText] = input.value.split('-');
+      const line = Number(lineText);
+      $$('button.cell', root).forEach(cell => cell.classList.toggle('line-selected', type === 'row' ? Number(cell.dataset.row) === line : Number(cell.dataset.col) === line));
+
+      const entries = type === 'row'
+        ? M[line].map((value, j) => ({ value, i: line, j }))
+        : M.map((row, i) => ({ value: row[line], i, j: line }));
+      const terms = entries.filter(item => item.value !== 0).map(item => {
+        const minor = minorMatrix(M, item.i, item.j);
+        const cof = ((item.i + item.j) % 2 === 0 ? 1 : -1) * determinant(minor);
         return String.raw`${formatNumber(item.value)}\cdot(${formatNumber(cof)})`;
       });
-      const zeros = entries.filter(item=>item.value===0).length;
+      const zeros = entries.filter(item => item.value === 0).length;
       const det = determinant(M);
-      const recommendation = type==='col'&&line===0 ? 'Elección óptima: hay tres ceros y queda un solo término.' : `Se puede desarrollar por esta línea, pero contiene ${zeros} cero(s). La primera columna es más breve.`;
-      $('#laplaceResult').innerHTML = String.raw`<p><strong>${recommendation}</strong></p><div class="formula-panel">\[\det(A)=${terms.join('+').replace(/\+\-/g,'-')}=${formatNumber(det)}.\]</div>${type==='col'&&line===0 ? String.raw`<p>Al eliminar la fila 1 y la columna 1 aparece la submatriz \(${matrixLatex(minorMatrix(M,0,0))}\), cuyo determinante es \(-56\).</p>` : ''}`;
-      if (type==='col'&&line===0) markCompleted('activity:laplace');
+      const recommendation = type === 'col' && line === 0
+        ? 'Elección óptima: hay tres ceros y queda un solo término.'
+        : `Se puede desarrollar por esta línea, pero contiene ${zeros} cero(s). La primera columna es más breve.`;
+
+      $('#laplaceResult').innerHTML = String.raw`<p><strong>${recommendation}</strong></p><div class="formula-panel">\[\det(A)=${terms.join('+').replace(/\+\-/g,'-')}=${formatNumber(det)}.\]</div>${type === 'col' && line === 0 ? String.raw`<p>Al eliminar la fila 1 y la columna 1 aparece la submatriz \(${matrixLatex(minorMatrix(M,0,0))}\), cuyo determinante es \(-56\).</p>` : ''}`;
+      if (type === 'col' && line === 0) {
+        input.closest('.choice-card').classList.add('correct');
+        markCompleted('activity:laplace');
+      }
       typeset($('#laplaceResult'));
     });
   }
+
 
   
 
@@ -849,47 +968,33 @@ function renderInverseLab() {
 
   const operation = inverseOperations[inverseStep];
 
-  choices.innerHTML = operation.choices
-    .map(choice => String.raw`
-      <button
-        type="button"
-        data-op="${escapeHtml(choice)}"
-      >
-        \(${choice}\)
-      </button>
-    `)
-    .join('');
+  choices.innerHTML = renderChoiceCards(
+    `inverse-step-${inverseStep}`,
+    operation.choices.map(choice => ({ value: choice, label: String.raw`\(${choice}\)` })),
+    `Operación elemental del paso ${inverseStep + 1}`,
+    'choice-cards--three choice-cards--wide'
+  );
 
   feedback.className = 'feedback';
   feedback.textContent = '';
 
-  choices.onclick = event => {
-    const button = event.target.closest('button');
+  choices.onchange = event => {
+    const input = event.target.closest('input[type="radio"]');
+    if (!input || input.disabled) return;
 
-    if (!button) return;
+    const isCorrect = input.value === operation.correct;
+    $$('.choice-card', choices).forEach(card => card.classList.remove('correct', 'wrong'));
+    input.closest('.choice-card').classList.add(isCorrect ? 'correct' : 'wrong');
 
-    const isCorrect =
-      button.dataset.op === operation.correct;
-
-    feedback.className = `feedback ${
-      isCorrect ? 'success' : 'error'
-    }`;
-
+    feedback.className = `feedback ${isCorrect ? 'success' : 'error'}`;
     feedback.textContent = isCorrect
       ? 'Operación correcta. Se aplica simultáneamente a ambos lados.'
       : 'Esa operación no acerca la parte izquierda a la identidad. Probá otra.';
 
     if (!isCorrect) return;
-
-    $$('button', choices).forEach(choiceButton => {
-      choiceButton.disabled = true;
-    });
-
+    $$('input[type="radio"]', choices).forEach(radio => { radio.disabled = true; });
     inverseStep++;
-
-    setTimeout(() => {
-      renderInverseLab();
-    }, 350);
+    setTimeout(() => { renderInverseLab(); }, 350);
   };
 
   typeset(choices);
@@ -929,20 +1034,30 @@ function renderInverseLab() {
   }
   function renderPropertyQuestion() {
     const item = propertyQuestions[propertyQuestionIndex];
-    $('#propertyQuiz').innerHTML = `<div class="choice-card"><p>${item.prompt}</p><div class="choice-options">${item.options.map((option,i)=>`<button type="button" data-choice="${i}">${option}</button>`).join('')}</div><div class="feedback"></div></div>`;
-    const card = $('.choice-card', $('#propertyQuiz'));
-    card.addEventListener('click', event => {
-      const button = event.target.closest('button');
-      if (!button) return;
-      const ok = Number(button.dataset.choice) === item.answer;
-      button.classList.add(ok?'correct':'wrong');
-      const feedback = $('.feedback',card);
-      feedback.className = `feedback ${ok?'success':'error'}`;
+    const root = $('#propertyQuiz');
+    root.innerHTML = `<div class="selection-question">
+      <p>${item.prompt}</p>
+      ${renderChoiceCards('property-question', item.options, 'Propiedad del determinante', 'choice-cards--three')}
+      <div class="feedback"></div>
+    </div>`;
+
+    root.onchange = (event) => {
+      const input = event.target.closest('input[type="radio"]');
+      if (!input || input.disabled) return;
+      const ok = Number(input.value) === item.answer;
+      $$('.choice-card', root).forEach(card => card.classList.remove('correct', 'wrong'));
+      input.closest('.choice-card').classList.add(ok ? 'correct' : 'wrong');
+
+      const feedback = $('.feedback', root);
+      feedback.className = `feedback ${ok ? 'success' : 'error'}`;
       feedback.innerHTML = item.explanation;
-      if (ok) markCompleted('activity:property-quiz');
+      if (ok) {
+        $$('input[type="radio"]', root).forEach(radio => { radio.disabled = true; });
+        markCompleted('activity:property-quiz');
+      }
       typeset(feedback);
-    });
-    typeset($('#propertyQuiz'));
+    };
+    typeset(root);
   }
 
   function setupErrorDetective() {
@@ -952,18 +1067,29 @@ function renderInverseLab() {
   }
   function renderErrorCase() {
     const item = errorCases[errorCaseIndex];
-    $('#errorDetective').innerHTML = `<div class="error-case"><p>${item.statement}</p><div class="error-options">${item.options.map((option,i)=>`<button type="button" data-choice="${i}">${option}</button>`).join('')}</div><div class="feedback"></div></div>`;
     const root = $('#errorDetective');
-    root.addEventListener('click', event => {
-      const button = event.target.closest('button');
-      if (!button) return;
-      const ok = Number(button.dataset.choice) === item.answer;
-      const feedback = $('.feedback',root);
-      feedback.className = `feedback ${ok?'success':'error'}`;
-      feedback.innerHTML = `${ok?'Correcto.':'Revisá la propiedad involucrada.'} ${item.explanation}`;
-      if (ok) markCompleted('activity:error');
+    root.innerHTML = `<div class="error-case selection-question">
+      <p>${item.statement}</p>
+      ${renderChoiceCards('error-case', item.options, 'Respuesta del detective de errores', 'choice-cards--three')}
+      <div class="feedback"></div>
+    </div>`;
+
+    root.onchange = (event) => {
+      const input = event.target.closest('input[type="radio"]');
+      if (!input || input.disabled) return;
+      const ok = Number(input.value) === item.answer;
+      $$('.choice-card', root).forEach(card => card.classList.remove('correct', 'wrong'));
+      input.closest('.choice-card').classList.add(ok ? 'correct' : 'wrong');
+
+      const feedback = $('.feedback', root);
+      feedback.className = `feedback ${ok ? 'success' : 'error'}`;
+      feedback.innerHTML = `${ok ? 'Correcto.' : 'Revisá la propiedad involucrada.'} ${item.explanation}`;
+      if (ok) {
+        $$('input[type="radio"]', root).forEach(radio => { radio.disabled = true; });
+        markCompleted('activity:error');
+      }
       typeset(feedback);
-    }, {once:true});
+    };
     typeset(root);
   }
 
@@ -987,32 +1113,47 @@ function renderInverseLab() {
     generateQuiz();
   }
   function generateQuiz() {
-    currentQuiz = shuffle([...quizBank]).slice(0,10);
-    $('#quizQuestions').innerHTML = currentQuiz.map((item,index) => `
-      <div class="quiz-question" data-index="${index}"><h4>${index+1}. ${item.q}</h4>${item.options.map((option,i)=>`<label class="quiz-option"><input type="radio" name="quiz-${index}" value="${i}"><span>${option}</span></label>`).join('')}<p class="quiz-explanation" hidden></p></div>`).join('');
+    currentQuiz = shuffle([...quizBank]).slice(0, 10);
+    $('#quizQuestions').innerHTML = currentQuiz.map((item, index) => `
+      <div class="quiz-question" data-index="${index}">
+        <h4>${index + 1}. ${item.q}</h4>
+        ${renderChoiceCards(`quiz-${index}`, item.options, `Pregunta ${index + 1} de la autoevaluación`, 'choice-cards--quiz')}
+        <p class="quiz-explanation" hidden></p>
+      </div>`).join('');
     $('#quizResult').innerHTML = '';
     typeset($('#quizQuestions'));
   }
+
   function gradeQuiz() {
     let score = 0;
-    $$('.quiz-question').forEach((question,index) => {
-      const selected = $('input:checked',question);
+    $$('.quiz-question').forEach((question, index) => {
+      const selected = $('input:checked', question);
       const item = currentQuiz[index];
       const ok = selected && Number(selected.value) === item.a;
       question.classList.toggle('correct', Boolean(ok));
       question.classList.toggle('incorrect', !ok);
-      const explanation = $('.quiz-explanation',question);
+
+      $$('.choice-card', question).forEach((card) => {
+        const input = $('input', card);
+        const optionIndex = Number(input.value);
+        card.classList.toggle('correct', optionIndex === item.a);
+        card.classList.toggle('wrong', Boolean(selected) && input === selected && optionIndex !== item.a);
+        input.disabled = true;
+      });
+
+      const explanation = $('.quiz-explanation', question);
       explanation.hidden = false;
-      explanation.innerHTML = `${ok?'✓ Correcto.':'✗ Respuesta correcta: '+item.options[item.a]+'.'} ${item.e}`;
+      explanation.innerHTML = `${ok ? '✓ Correcto.' : '✗ Respuesta correcta: ' + item.options[item.a] + '.'} ${item.e}`;
       if (ok) score++;
     });
-    if (score > (state.quizBest||0)) state.quizBest = score;
+
+    if (score > (state.quizBest || 0)) state.quizBest = score;
     saveState();
     updateProgress();
     const result = $('#quizResult');
-    result.className = `quiz-result feedback ${score>=7?'success':'info'}`;
-    result.innerHTML = `<strong>Resultado: ${score}/10.</strong> ${score>=8?'Muy buen dominio de la unidad.':score>=6?'Hay una base sólida, pero conviene revisar los errores.':'Volvé a los módulos señalados en cada explicación y generá otra evaluación.'}`;
-    if (score>=7) markCompleted('activity:quiz');
+    result.className = `quiz-result feedback ${score >= 7 ? 'success' : 'info'}`;
+    result.innerHTML = `<strong>Resultado: ${score}/10.</strong> ${score >= 8 ? 'Muy buen dominio de la unidad.' : score >= 6 ? 'Hay una base sólida, pero conviene revisar los errores.' : 'Volvé a los módulos señalados en cada explicación y generá otra evaluación.'}`;
+    if (score >= 7) markCompleted('activity:quiz');
     typeset($('#quizQuestions'));
   }
 
