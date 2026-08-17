@@ -709,12 +709,12 @@
   let sarrusStep = 0;
   const sarrusMatrix = [[1,2,-2],[3,0,1],[-1,1,3]];
   const sarrusPaths = [
-    {type:'positive', coords:[[0,0],[1,1],[2,2]], product:0, text:String.raw`1\cdot0\cdot3=0`},
-    {type:'positive', coords:[[0,1],[1,2],[2,3]], product:-2, text:String.raw`2\cdot1\cdot(-1)=-2`},
-    {type:'positive', coords:[[0,2],[1,3],[2,4]], product:-6, text:String.raw`(-2)\cdot3\cdot1=-6`},
-    {type:'negative', coords:[[2,0],[1,1],[0,2]], product:0, text:String.raw`(-1)\cdot0\cdot(-2)=0`},
-    {type:'negative', coords:[[2,1],[1,2],[0,3]], product:1, text:String.raw`1\cdot1\cdot1=1`},
-    {type:'negative', coords:[[2,2],[1,3],[0,4]], product:18, text:String.raw`3\cdot3\cdot2=18`}
+    {type:'positive', coords:[[0,0],[1,1],[2,2]], product:0, text:String.raw`1\cdot0\cdot3`},
+    {type:'positive', coords:[[0,1],[1,2],[2,3]], product:-2, text:String.raw`2\cdot1\cdot(-1)`},
+    {type:'positive', coords:[[0,2],[1,3],[2,4]], product:-6, text:String.raw`(-2)\cdot3\cdot1`},
+    {type:'negative', coords:[[2,0],[1,1],[0,2]], product:0, text:String.raw`(-1)\cdot0\cdot(-2)`},
+    {type:'negative', coords:[[2,1],[1,2],[0,3]], product:1, text:String.raw`1\cdot1\cdot1`},
+    {type:'negative', coords:[[2,2],[1,3],[0,4]], product:18, text:String.raw`3\cdot3\cdot2`}
   ];
   function setupSarrusLab() {
     $('#nextSarrusStep').addEventListener('click', () => { if (sarrusStep < sarrusPaths.length) sarrusStep++; renderSarrus(); });
@@ -733,7 +733,7 @@
     const positives = shown.filter(x=>x.type==='positive').map(x=>`(${x.text})`);
     const negatives = shown.filter(x=>x.type==='negative').map(x=>`(${x.text})`);
     let formula = shown.length ? String.raw`\[${positives.join('+') || '0'}${negatives.length ? String.raw`-\left[${negatives.join('+')}\right]` : ''}` : '';
-    if (sarrusStep === sarrusPaths.length) formula += String.raw`=-8-19=-27.\]`;
+    if (sarrusStep === sarrusPaths.length) formula += String.raw`= 0-2 -6 -(0+1+18)=-8-19=-27.\]`;
     else if (shown.length) formula += String.raw`.\]`;
     $('#sarrusCalculation').innerHTML = shown.length ? formula : 'Las tres diagonales descendentes se suman y las tres ascendentes se restan.';
     $('#nextSarrusStep').disabled = sarrusStep === sarrusPaths.length;
