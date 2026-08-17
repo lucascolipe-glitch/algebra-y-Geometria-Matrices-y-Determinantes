@@ -158,7 +158,7 @@
     { statement: String.raw`XA=B`, choices: [String.raw`\(X=A^{-1}B\)`, String.raw`\(X=BA^{-1}\)`], answer: 1, explanation: 'A está a la derecha de X, por eso se multiplica por \(A^{-1}\) desde la derecha.' },
     { statement: String.raw`(A-I)X=-B`, choices: [String.raw`\(X=(A-I)^{-1}(-B)\)`, String.raw`\(X=(-B)(A-I)^{-1}\)`], answer: 0, explanation: 'El factor \(A-I\) aparece a la izquierda de X.' },
     { statement: String.raw`X(A+3I)=C`, choices: [String.raw`\(X=(A+3I)^{-1}C\)`, String.raw`\(X=C(A+3I)^{-1}\)`], answer: 1, explanation: 'El factor \(A+3I\) aparece a la derecha de X.' }
-  ];
+  ]; 
 
   const propertyQuestions = [
     { prompt: String.raw`Si \(A\) es triangular con diagonal \(2,-1,5\), ¿cómo conviene calcular \(\det(A)\)?`, options: ['Regla de Sarrus','Producto de la diagonal','Sumar todas las entradas'], answer: 1, explanation: String.raw`\(\det(A)=2(-1)5=-10\).` },
